@@ -1,0 +1,16 @@
+[project]
+name = "agenticgemma"
+version = "0.1.0"
+description = "Multi-agent system with dual LLM provider support (OpenAI + Ollama)"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "openai>=1.60",
+    "httpx",
+    "ollama",
+    "aiofiles",
+    "python-frontmatter",
+]
