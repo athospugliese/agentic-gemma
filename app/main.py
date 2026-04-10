@@ -140,7 +140,10 @@ def _create_adapter_and_client() -> tuple[LLMAdapter, Any]:
     if settings.llm_provider == "ollama":
         from app.services.ollama_adapter import OllamaAdapter
         adapter = OllamaAdapter(base_url=settings.ollama_base_url)
-        # For side queries (memory, compaction), pass the adapter itself
+        return adapter, adapter
+    elif settings.llm_provider == "koboldcpp":
+        from app.services.koboldcpp_adapter import KoboldCppAdapter
+        adapter = KoboldCppAdapter(base_url=settings.koboldcpp_base_url)
         return adapter, adapter
     else:
         from openai import AsyncOpenAI
@@ -161,6 +164,9 @@ def _create_engine(session_id: str, req: CreateSessionRequest) -> QueryEngine:
     if settings.llm_provider == "ollama":
         default_model = settings.ollama_model
         fast_model = settings.ollama_model
+    elif settings.llm_provider == "koboldcpp":
+        default_model = settings.koboldcpp_model
+        fast_model = settings.koboldcpp_model
     else:
         default_model = settings.default_model
         fast_model = settings.fast_model

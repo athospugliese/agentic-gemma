@@ -229,11 +229,17 @@ class AgentTool(Tool):
             return self._alias_to_model(agent_def.model)
         if self._settings.llm_provider == "ollama":
             return self._settings.ollama_model
+        if self._settings.llm_provider == "koboldcpp":
+            return self._settings.koboldcpp_model
         return self._settings.default_model
 
     def _alias_to_model(self, alias: str) -> str:
-        if self._settings.llm_provider == "ollama":
-            model = self._settings.ollama_model
+        if self._settings.llm_provider in ("ollama", "koboldcpp"):
+            model = (
+                self._settings.ollama_model
+                if self._settings.llm_provider == "ollama"
+                else self._settings.koboldcpp_model
+            )
             aliases = {
                 "smart": model,
                 "fast": model,
@@ -317,7 +323,11 @@ class AgentTool(Tool):
             permissions=permissions,
             session_id=child_id,
             model=model,
-            fast_model=self._settings.ollama_model if self._settings.llm_provider == "ollama" else self._settings.fast_model,
+            fast_model=(
+                self._settings.ollama_model if self._settings.llm_provider == "ollama"
+                else self._settings.koboldcpp_model if self._settings.llm_provider == "koboldcpp"
+                else self._settings.fast_model
+            ),
             max_tokens=self._settings.max_tokens,
             max_turns=agent_def.max_turns,
             cwd=context.cwd,
