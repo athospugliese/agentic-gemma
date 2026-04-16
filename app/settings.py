@@ -22,7 +22,7 @@ class HookEntry(BaseModel):
 
 
 class Settings(BaseSettings):
-    # Provider routing: "openai" or "ollama"
+    # Provider routing: "openai", "ollama", or "koboldcpp"
     llm_provider: str = "openai"
 
     # OpenAI
@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     # Ollama
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "gemma4:e2b"
+
+    # KoboldCpp
+    koboldcpp_base_url: str = "http://localhost:5001"
+    koboldcpp_model: str = "koboldcpp"
 
     # Paths
     data_dir: str = "~/.agent"
