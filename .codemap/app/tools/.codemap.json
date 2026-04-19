@@ -1,0 +1,917 @@
+{
+  "directory": "app\\tools",
+  "files": {
+    "__init__.py": {
+      "hash": "e3b0c44298fc",
+      "indexed_at": "2026-04-10T02:46:03.248409+00:00",
+      "language": "python",
+      "lines": 0,
+      "mtime_ns": 1775773839123534900,
+      "size": 0,
+      "symbols": []
+    },
+    "agent_tool.py": {
+      "hash": "396496d252ad",
+      "indexed_at": "2026-04-10T02:46:03.106185+00:00",
+      "language": "python",
+      "lines": 361,
+      "mtime_ns": 1775782393801132300,
+      "size": 14457,
+      "symbols": [
+        {
+          "children": [
+            {
+              "lines": [
+                60,
+                73
+              ],
+              "name": "__init__",
+              "signature": "(self, adapter: LLMAdapter, tool_registry: ToolRegistry, agent_registry: AgentRegistry, settings:...",
+              "type": "method"
+            },
+            {
+              "lines": [
+                75,
+                77
+              ],
+              "name": "is_read_only",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                79,
+                81
+              ],
+              "name": "is_concurrency_safe",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                83,
+                114
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Run sub-agent synchronously and return its output.",
+              "lines": [
+                116,
+                151
+              ],
+              "name": "_run_foreground",
+              "signature": "(self, engine: QueryEngine, prompt: str, description: str) -> ToolResult",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Run sub-agent in background with notification on completion.\n\nStores result in _agent_results for TaskOutput retrieval.\nEnqueues task-notification XML",
+              "lines": [
+                153,
+                222
+              ],
+              "name": "_run_background",
+              "signature": "(self, engine: QueryEngine, prompt: str, description: str, context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Resolve model: override > agent definition > settings default.",
+              "lines": [
+                224,
+                234
+              ],
+              "name": "_resolve_model",
+              "signature": "(self, override: str | None, agent_def: AgentDefinition) -> str",
+              "type": "method"
+            },
+            {
+              "lines": [
+                236,
+                256
+              ],
+              "name": "_alias_to_model",
+              "signature": "(self, alias: str) -> str",
+              "type": "method"
+            },
+            {
+              "docstring": "Build a filtered tool registry for the sub-agent.\n\nApplies:\n1. Global sub-agent restrictions (Agent, SendMessage blocked by default)\n2. Agent definiti",
+              "lines": [
+                258,
+                282
+              ],
+              "name": "_build_sub_registry",
+              "signature": "(self, agent_def: AgentDefinition) -> ToolRegistry",
+              "type": "method"
+            },
+            {
+              "docstring": "Create a QueryEngine for the sub-agent with isolated context.\n\nIsolation:\n- Cloned file_state_cache (sub-agent reads don't affect parent)\n- Fresh abor",
+              "lines": [
+                284,
+                350
+              ],
+              "name": "_create_sub_engine",
+              "signature": "(self, agent_def: AgentDefinition, model: str, registry: ToolRegistry, context: ToolContext, is_b...",
+              "type": "method"
+            },
+            {
+              "lines": [
+                352,
+                353
+              ],
+              "name": "get_background_task",
+              "signature": "(self, agent_id: str) -> asyncio.Task | None",
+              "type": "method"
+            },
+            {
+              "docstring": "Get stored result from a completed background agent.",
+              "lines": [
+                355,
+                357
+              ],
+              "name": "get_agent_result",
+              "signature": "(self, agent_id: str) -> dict[str, Any] | None",
+              "type": "method"
+            },
+            {
+              "docstring": "Get the QueryEngine of a background agent (for SendMessage continuation).",
+              "lines": [
+                359,
+                361
+              ],
+              "name": "get_agent_engine",
+              "signature": "(self, agent_id: str) -> Any | None",
+              "type": "method"
+            }
+          ],
+          "docstring": "Spawns a sub-agent to handle a delegated task.\n\nThe sub-agent gets its own query loop with filtered tools and\nits own system prompt based on the agent",
+          "lines": [
+            21,
+            361
+          ],
+          "name": "AgentTool",
+          "type": "class"
+        }
+      ]
+    },
+    "base.py": {
+      "hash": "b2db813afcfc",
+      "indexed_at": "2026-04-10T02:46:03.117444+00:00",
+      "language": "python",
+      "lines": 115,
+      "mtime_ns": 1775773839124534200,
+      "size": 3715,
+      "symbols": [
+        {
+          "docstring": "Result returned by a tool execution.",
+          "lines": [
+            15,
+            21
+          ],
+          "name": "ToolResult",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                31,
+                32
+              ],
+              "name": "is_read_only",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "docstring": "Whether this tool can safely run in parallel with other concurrency-safe tools.\n\nSeparate from is_read_only: a tool can be read-only but not concurren",
+              "lines": [
+                34,
+                43
+              ],
+              "name": "is_concurrency_safe",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                45,
+                46
+              ],
+              "name": "is_enabled",
+              "signature": "(self) -> bool",
+              "type": "method"
+            },
+            {
+              "docstring": "Execute the tool with given input.",
+              "lines": [
+                48,
+                51
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Convert to provider-agnostic tool definition for the LLM.",
+              "lines": [
+                53,
+                59
+              ],
+              "name": "to_definition",
+              "signature": "(self) -> ToolDefinition",
+              "type": "method"
+            }
+          ],
+          "docstring": "Base class for all tools.",
+          "lines": [
+            24,
+            59
+          ],
+          "name": "Tool",
+          "type": "class"
+        },
+        {
+          "docstring": "Context available to tools during execution.",
+          "lines": [
+            62,
+            74
+          ],
+          "name": "ToolContext",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                80,
+                81
+              ],
+              "name": "__init__",
+              "signature": "(self) -> None",
+              "type": "method"
+            },
+            {
+              "lines": [
+                83,
+                84
+              ],
+              "name": "register",
+              "signature": "(self, tool: Tool) -> None",
+              "type": "method"
+            },
+            {
+              "lines": [
+                86,
+                87
+              ],
+              "name": "get",
+              "signature": "(self, name: str) -> Tool | None",
+              "type": "method"
+            },
+            {
+              "lines": [
+                89,
+                90
+              ],
+              "name": "all",
+              "signature": "(self) -> list[Tool]",
+              "type": "method"
+            },
+            {
+              "lines": [
+                92,
+                93
+              ],
+              "name": "definitions",
+              "signature": "(self) -> list[ToolDefinition]",
+              "type": "method"
+            },
+            {
+              "docstring": "Filter tools by name lists or read-only flag.",
+              "lines": [
+                95,
+                112
+              ],
+              "name": "filter",
+              "signature": "(self, include: list[str] | None=None, exclude: list[str] | None=None, read_only: bool=False) -> ...",
+              "type": "method"
+            },
+            {
+              "lines": [
+                114,
+                115
+              ],
+              "name": "filtered_definitions",
+              "signature": "(self, **kwargs: Any) -> list[ToolDefinition]",
+              "type": "method"
+            }
+          ],
+          "docstring": "Registry of available tools.",
+          "lines": [
+            77,
+            115
+          ],
+          "name": "ToolRegistry",
+          "type": "class"
+        }
+      ]
+    },
+    "bash.py": {
+      "hash": "99674ec17e0b",
+      "indexed_at": "2026-04-10T02:46:03.132714+00:00",
+      "language": "python",
+      "lines": 254,
+      "mtime_ns": 1775773839124534200,
+      "size": 9435,
+      "symbols": [
+        {
+          "children": [
+            {
+              "lines": [
+                65,
+                67
+              ],
+              "name": "is_read_only",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                69,
+                146
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            47,
+            146
+          ],
+          "name": "BashTool",
+          "type": "class"
+        },
+        {
+          "docstring": "Check if a bash command is read-only (no state mutation).\n\nHandles compound commands (&&, ||, ;), pipes, and redirections.",
+          "lines": [
+            153,
+            181
+          ],
+          "name": "_is_command_read_only",
+          "signature": "(command: str) -> bool",
+          "type": "function"
+        },
+        {
+          "docstring": "Check if a single command (no pipes, no chains) is read-only.",
+          "lines": [
+            184,
+            244
+          ],
+          "name": "_is_single_command_read_only",
+          "signature": "(command: str) -> bool",
+          "type": "function"
+        },
+        {
+          "docstring": "Build environment for subprocess with useful defaults.",
+          "lines": [
+            247,
+            254
+          ],
+          "name": "_build_env",
+          "signature": "(context: ToolContext) -> dict[str, str]",
+          "type": "function"
+        }
+      ]
+    },
+    "filesystem.py": {
+      "hash": "d29abf2796a7",
+      "indexed_at": "2026-04-10T02:46:03.149785+00:00",
+      "language": "python",
+      "lines": 374,
+      "mtime_ns": 1775773839124534200,
+      "size": 15443,
+      "symbols": [
+        {
+          "children": [
+            {
+              "lines": [
+                32,
+                33
+              ],
+              "name": "is_read_only",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                35,
+                36
+              ],
+              "name": "is_concurrency_safe",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                38,
+                74
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            19,
+            74
+          ],
+          "name": "ReadTool",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                89,
+                100
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            77,
+            100
+          ],
+          "name": "WriteTool",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                117,
+                185
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            103,
+            185
+          ],
+          "name": "EditTool",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                200,
+                201
+              ],
+              "name": "is_read_only",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                203,
+                204
+              ],
+              "name": "is_concurrency_safe",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                206,
+                226
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            188,
+            226
+          ],
+          "name": "GlobTool",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                250,
+                251
+              ],
+              "name": "is_read_only",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                253,
+                254
+              ],
+              "name": "is_concurrency_safe",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                256,
+                276
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Search using ripgrep subprocess.",
+              "lines": [
+                278,
+                319
+              ],
+              "name": "_rg_search",
+              "signature": "(self, pattern: str, path: str, glob_filter: str | None, output_mode: str, ctx_lines: int, case_i...",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Fallback: Python re-based search.",
+              "lines": [
+                321,
+                374
+              ],
+              "name": "_python_search",
+              "signature": "(self, pattern_str: str, search_path: str, glob_filter: str | None, output_mode: str, ctx_lines: ...",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            229,
+            374
+          ],
+          "name": "GrepTool",
+          "type": "class"
+        }
+      ]
+    },
+    "plan_mode.py": {
+      "hash": "fb355288f611",
+      "indexed_at": "2026-04-10T02:46:03.163346+00:00",
+      "language": "python",
+      "lines": 60,
+      "mtime_ns": 1775773839125535200,
+      "size": 2189,
+      "symbols": [
+        {
+          "children": [
+            {
+              "lines": [
+                18,
+                19
+              ],
+              "name": "is_read_only",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                21,
+                37
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            10,
+            37
+          ],
+          "name": "EnterPlanModeTool",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                54,
+                60
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            40,
+            60
+          ],
+          "name": "ExitPlanModeTool",
+          "type": "class"
+        }
+      ]
+    },
+    "registry.py": {
+      "hash": "329e53f5cdb5",
+      "indexed_at": "2026-04-10T02:46:03.175512+00:00",
+      "language": "python",
+      "lines": 61,
+      "mtime_ns": 1775773839125535200,
+      "size": 2106,
+      "symbols": [
+        {
+          "docstring": "Create a registry with core tools (no Agent tool - needs extra deps).",
+          "lines": [
+            21,
+            35
+          ],
+          "name": "create_default_registry",
+          "signature": "() -> ToolRegistry",
+          "type": "function"
+        },
+        {
+          "docstring": "Create a registry with all tools including Agent, SendMessage, TaskStop, TaskOutput.",
+          "lines": [
+            38,
+            61
+          ],
+          "name": "create_full_registry",
+          "signature": "(adapter: LLMAdapter, agent_registry: AgentRegistry, settings: Settings) -> ToolRegistry",
+          "type": "function"
+        }
+      ]
+    },
+    "send_message.py": {
+      "hash": "8e3b1d11243e",
+      "indexed_at": "2026-04-10T02:46:03.191805+00:00",
+      "language": "python",
+      "lines": 188,
+      "mtime_ns": 1775773839125535200,
+      "size": 7736,
+      "symbols": [
+        {
+          "children": [
+            {
+              "docstring": "Initialize with reference to AgentTool for background task lookup.",
+              "lines": [
+                49,
+                51
+              ],
+              "name": "__init__",
+              "signature": "(self, agent_tool: Any=None)",
+              "type": "method"
+            },
+            {
+              "lines": [
+                53,
+                80
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Continue a completed agent by submitting a new message to its engine.\n\nThe engine retains full conversation history, file state, and context.",
+              "lines": [
+                82,
+                146
+              ],
+              "name": "_continue_completed_agent",
+              "signature": "(self, agent_id: str, engine: Any, message: str, context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Inject a message into a running agent via its notification queue.\n\nThe message will be drained at the start of the agent's next turn.",
+              "lines": [
+                148,
+                160
+              ],
+              "name": "_inject_into_running_agent",
+              "signature": "(self, agent_id: str, engine: Any, message: str) -> ToolResult",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Fallback: respawn an agent with a continuation message (loses context).",
+              "lines": [
+                162,
+                188
+              ],
+              "name": "_respawn_agent",
+              "signature": "(self, agent_id: str, message: str, context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "docstring": "Send a follow-up message to a running or completed background agent.\n\nUsed by the coordinator to:\n- Continue workers with synthesized instructions\n- A",
+          "lines": [
+            14,
+            188
+          ],
+          "name": "SendMessageTool",
+          "type": "class"
+        }
+      ]
+    },
+    "task_tools.py": {
+      "hash": "0eb1619911c7",
+      "indexed_at": "2026-04-10T02:46:03.209121+00:00",
+      "language": "python",
+      "lines": 130,
+      "mtime_ns": 1775773839126534500,
+      "size": 4995,
+      "symbols": [
+        {
+          "children": [
+            {
+              "lines": [
+                25,
+                26
+              ],
+              "name": "__init__",
+              "signature": "(self, agent_tool: Any=None)",
+              "type": "method"
+            },
+            {
+              "lines": [
+                28,
+                48
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            11,
+            48
+          ],
+          "name": "TaskStopTool",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                73,
+                74
+              ],
+              "name": "is_read_only",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                76,
+                77
+              ],
+              "name": "__init__",
+              "signature": "(self, agent_tool: Any=None)",
+              "type": "method"
+            },
+            {
+              "lines": [
+                79,
+                130
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            51,
+            130
+          ],
+          "name": "TaskOutputTool",
+          "type": "class"
+        }
+      ]
+    },
+    "todo.py": {
+      "hash": "bb0923176c95",
+      "indexed_at": "2026-04-10T02:46:03.224348+00:00",
+      "language": "python",
+      "lines": 57,
+      "mtime_ns": 1775773839126534500,
+      "size": 2146,
+      "symbols": [
+        {
+          "children": [
+            {
+              "lines": [
+                36,
+                57
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            13,
+            57
+          ],
+          "name": "TodoWriteTool",
+          "type": "class"
+        }
+      ]
+    },
+    "web_fetch.py": {
+      "hash": "a37f0a58d0f9",
+      "indexed_at": "2026-04-10T02:46:03.243694+00:00",
+      "language": "python",
+      "lines": 95,
+      "mtime_ns": 1775773839127534600,
+      "size": 3529,
+      "symbols": [
+        {
+          "children": [
+            {
+              "lines": [
+                36,
+                37
+              ],
+              "name": "is_read_only",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                39,
+                95
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            18,
+            95
+          ],
+          "name": "WebFetchTool",
+          "type": "class"
+        }
+      ]
+    },
+    "web_search.py": {
+      "hash": "bf65083d91cd",
+      "indexed_at": "2026-04-10T02:46:03.247422+00:00",
+      "language": "python",
+      "lines": 113,
+      "mtime_ns": 1775773839127534600,
+      "size": 4560,
+      "symbols": [
+        {
+          "children": [
+            {
+              "lines": [
+                28,
+                29
+              ],
+              "name": "is_read_only",
+              "signature": "(self, input: dict[str, Any]) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                31,
+                40
+              ],
+              "name": "call",
+              "signature": "(self, input: dict[str, Any], context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Fallback: use DuckDuckGo HTML search via httpx.",
+              "lines": [
+                42,
+                113
+              ],
+              "name": "_search_via_fetch",
+              "signature": "(self, query: str, num_results: int, context: ToolContext) -> ToolResult",
+              "type": "async_method"
+            }
+          ],
+          "lines": [
+            10,
+            113
+          ],
+          "name": "WebSearchTool",
+          "type": "class"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-04-10T02:46:03.458222+00:00",
+  "version": "1.0"
+}

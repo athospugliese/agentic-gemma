@@ -1,0 +1,126 @@
+{
+  "directory": "",
+  "files": {
+    "README.md": {
+      "hash": "95703ea61006",
+      "indexed_at": "2026-04-10T02:46:02.711859+00:00",
+      "language": "markdown",
+      "lines": 82,
+      "mtime_ns": 1775773839106267000,
+      "size": 2257,
+      "symbols": [
+        {
+          "lines": [
+            5,
+            14
+          ],
+          "name": "Setup",
+          "type": "section"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                17,
+                27
+              ],
+              "name": "Ollama + Gemma 4 E2B (local)",
+              "type": "subsection"
+            },
+            {
+              "lines": [
+                28,
+                38
+              ],
+              "name": "OpenAI",
+              "type": "subsection"
+            }
+          ],
+          "lines": [
+            15,
+            38
+          ],
+          "name": "Usage",
+          "type": "section"
+        },
+        {
+          "lines": [
+            39,
+            57
+          ],
+          "name": "API",
+          "type": "section"
+        },
+        {
+          "docstring": "| Variable | Default | Description | |----------|---------|-------------| | `AGENT_LLM_PROVIDER` | `openai` | `openai` or `ollama` | | `AGENT_OPENAI_A",
+          "lines": [
+            58,
+            71
+          ],
+          "name": "Configuration",
+          "type": "section"
+        },
+        {
+          "lines": [
+            72,
+            83
+          ],
+          "name": "Architecture",
+          "type": "section"
+        }
+      ]
+    },
+    "agent.py": {
+      "hash": "8cb8609f3b04",
+      "indexed_at": "2026-04-10T02:46:02.711109+00:00",
+      "language": "python",
+      "lines": 138,
+      "mtime_ns": 1775773839107386400,
+      "size": 4961,
+      "symbols": [
+        {
+          "docstring": "Faz infer\u00eancia no Gemma 4 via Ollama API.",
+          "lines": [
+            13,
+            29
+          ],
+          "name": "ollama_generate",
+          "signature": "(prompt: str, system: str='', temperature: float=0.7) -> str",
+          "type": "function"
+        },
+        {
+          "docstring": "SubAgent 1 - Analista: decomp\u00f5e o problema e raciocina passo a passo.",
+          "lines": [
+            36,
+            45
+          ],
+          "name": "subagent_analyst",
+          "signature": "(task: str) -> str",
+          "type": "function"
+        },
+        {
+          "docstring": "SubAgent 2 - Cr\u00edtico: revisa a an\u00e1lise e aponta falhas ou melhorias.",
+          "lines": [
+            48,
+            63
+          ],
+          "name": "subagent_critic",
+          "signature": "(analysis: str, original_task: str) -> str",
+          "type": "function"
+        },
+        {
+          "docstring": "Orquestra os subagents e sintetiza a resposta final.",
+          "lines": [
+            70,
+            108
+          ],
+          "name": "main_agent",
+          "signature": "(task: str) -> None",
+          "type": "function"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-04-10T02:46:03.446563+00:00",
+  "version": "1.0"
+}

@@ -41,6 +41,15 @@ class Settings(BaseSettings):
     koboldcpp_base_url: str = "http://localhost:5001"
     koboldcpp_model: str = "koboldcpp"
 
+    # MariaDB (text-to-SQL tool) — always read-only
+    mariadb_host: str = ""
+    mariadb_port: int = 3306
+    mariadb_user: str = ""
+    mariadb_password: str = ""
+    mariadb_database: str = ""
+    mariadb_max_rows: int = 100
+    mariadb_query_timeout: int = 15
+
     # Paths
     data_dir: str = "~/.agent"
     project_dir: str = "."

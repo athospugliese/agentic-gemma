@@ -1,0 +1,462 @@
+{
+  "directory": "app",
+  "files": {
+    "__init__.py": {
+      "hash": "e3b0c44298fc",
+      "indexed_at": "2026-04-10T02:46:02.793280+00:00",
+      "language": "python",
+      "lines": 0,
+      "mtime_ns": 1775773839108109400,
+      "size": 0,
+      "symbols": []
+    },
+    "main.py": {
+      "hash": "4b2aaf3b95b5",
+      "indexed_at": "2026-04-10T02:46:02.743502+00:00",
+      "language": "python",
+      "lines": 579,
+      "mtime_ns": 1775782358487666300,
+      "size": 21346,
+      "symbols": [
+        {
+          "lines": [
+            40,
+            61
+          ],
+          "name": "lifespan",
+          "signature": "(app: FastAPI)",
+          "type": "async_function"
+        },
+        {
+          "lines": [
+            71,
+            77
+          ],
+          "name": "CreateSessionRequest",
+          "type": "class"
+        },
+        {
+          "lines": [
+            80,
+            82
+          ],
+          "name": "SessionResponse",
+          "type": "class"
+        },
+        {
+          "lines": [
+            85,
+            87
+          ],
+          "name": "MessageRequest",
+          "type": "class"
+        },
+        {
+          "lines": [
+            90,
+            95
+          ],
+          "name": "ToolCallDetail",
+          "type": "class"
+        },
+        {
+          "lines": [
+            98,
+            103
+          ],
+          "name": "UsageInfo",
+          "type": "class"
+        },
+        {
+          "docstring": "Complete response for a single message turn (non-streaming).",
+          "lines": [
+            106,
+            127
+          ],
+          "name": "MessageResponse",
+          "type": "class"
+        },
+        {
+          "lines": [
+            130,
+            131
+          ],
+          "name": "PermissionResponse",
+          "type": "class"
+        },
+        {
+          "docstring": "Create the LLM adapter and side-query client based on configured provider.",
+          "lines": [
+            138,
+            156
+          ],
+          "name": "_create_adapter_and_client",
+          "signature": "() -> tuple[LLMAdapter, Any]",
+          "type": "function"
+        },
+        {
+          "docstring": "Create a QueryEngine from request params.",
+          "lines": [
+            159,
+            219
+          ],
+          "name": "_create_engine",
+          "signature": "(session_id: str, req: CreateSessionRequest) -> QueryEngine",
+          "type": "function"
+        },
+        {
+          "docstring": "Format a QueryEvent as an SSE data line.",
+          "lines": [
+            222,
+            225
+          ],
+          "name": "_format_sse",
+          "signature": "(event: QueryEvent) -> str",
+          "type": "function"
+        },
+        {
+          "docstring": "Create a new agent session.",
+          "lines": [
+            232,
+            238
+          ],
+          "name": "create_session",
+          "signature": "(req: CreateSessionRequest=...) -> SessionResponse",
+          "type": "async_function"
+        },
+        {
+          "docstring": "List active sessions.",
+          "lines": [
+            241,
+            244
+          ],
+          "name": "list_sessions",
+          "signature": "() -> list[dict[str, Any]]",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Remove an active session.",
+          "lines": [
+            247,
+            255
+          ],
+          "name": "delete_session",
+          "signature": "(session_id: str) -> dict[str, str]",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Send a message and stream the response as SSE events.",
+          "lines": [
+            258,
+            282
+          ],
+          "name": "send_message",
+          "signature": "(session_id: str, req: MessageRequest) -> StreamingResponse",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Send a message and wait for the complete response (non-streaming).",
+          "lines": [
+            285,
+            365
+          ],
+          "name": "send_message_sync",
+          "signature": "(session_id: str, req: MessageRequest) -> MessageResponse",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Abort the current query in a session.",
+          "lines": [
+            368,
+            375
+          ],
+          "name": "abort_session",
+          "signature": "(session_id: str) -> dict[str, str]",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Respond to a permission request.",
+          "lines": [
+            378,
+            385
+          ],
+          "name": "respond_permission",
+          "signature": "(session_id: str, tool_use_id: str, req: PermissionResponse) -> dict[str, str]",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Trigger manual compaction of the session history.",
+          "lines": [
+            388,
+            410
+          ],
+          "name": "compact_session",
+          "signature": "(session_id: str) -> dict[str, Any]",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Resume a persisted session with full state restoration.\n\nRestores: messages, model, coordinator mode, permission mode, file cache, cwd.",
+          "lines": [
+            413,
+            470
+          ],
+          "name": "resume_session",
+          "signature": "(session_id: str) -> SessionResponse",
+          "type": "async_function"
+        },
+        {
+          "docstring": "List all persisted sessions from disk.",
+          "lines": [
+            473,
+            477
+          ],
+          "name": "list_persisted_sessions",
+          "signature": "() -> list[dict[str, Any]]",
+          "type": "async_function"
+        },
+        {
+          "docstring": "WebSocket for bidirectional real-time communication.",
+          "lines": [
+            482,
+            516
+          ],
+          "name": "websocket_session",
+          "signature": "(websocket: WebSocket, session_id: str)",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Inspect the context state of a session (observability).",
+          "lines": [
+            521,
+            570
+          ],
+          "name": "get_session_context",
+          "signature": "(session_id: str) -> dict[str, Any]",
+          "type": "async_function"
+        },
+        {
+          "lines": [
+            573,
+            579
+          ],
+          "name": "health",
+          "signature": "() -> dict[str, Any]",
+          "type": "async_function"
+        }
+      ]
+    },
+    "models.py": {
+      "hash": "ea596e8444c3",
+      "indexed_at": "2026-04-10T02:46:02.767191+00:00",
+      "language": "python",
+      "lines": 146,
+      "mtime_ns": 1775773839115533400,
+      "size": 4673,
+      "symbols": [
+        {
+          "lines": [
+            18,
+            20
+          ],
+          "name": "TextBlock",
+          "type": "class"
+        },
+        {
+          "lines": [
+            23,
+            27
+          ],
+          "name": "ToolUseBlock",
+          "type": "class"
+        },
+        {
+          "lines": [
+            30,
+            34
+          ],
+          "name": "ToolResultBlock",
+          "type": "class"
+        },
+        {
+          "lines": [
+            44,
+            48
+          ],
+          "name": "MessageRole",
+          "type": "class"
+        },
+        {
+          "lines": [
+            51,
+            56
+          ],
+          "name": "TokenUsage",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "docstring": "Extract concatenated text from content blocks or text field.",
+              "lines": [
+                74,
+                79
+              ],
+              "name": "get_text",
+              "signature": "(self) -> str",
+              "type": "method"
+            }
+          ],
+          "docstring": "Internal message representation, provider-agnostic.",
+          "lines": [
+            59,
+            79
+          ],
+          "name": "Message",
+          "type": "class"
+        },
+        {
+          "lines": [
+            82,
+            83
+          ],
+          "name": "create_user_message",
+          "signature": "(text: str, **kwargs: Any) -> Message",
+          "type": "function"
+        },
+        {
+          "lines": [
+            86,
+            95
+          ],
+          "name": "create_assistant_message",
+          "signature": "(text: str | None=None, tool_calls: list[ToolUseBlock] | None=None, usage: TokenUsage | None=None...",
+          "type": "function"
+        },
+        {
+          "lines": [
+            98,
+            105
+          ],
+          "name": "create_tool_result_message",
+          "signature": "(tool_call_id: str, content: str, is_error: bool=False, **kwargs: Any) -> Message",
+          "type": "function"
+        },
+        {
+          "lines": [
+            108,
+            109
+          ],
+          "name": "create_system_message",
+          "signature": "(text: str, **kwargs: Any) -> Message",
+          "type": "function"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                122,
+                129
+              ],
+              "name": "__init__",
+              "signature": "(self, summary: str, summarized_uuids: list[str] | None=None, **kwargs: Any)",
+              "type": "method"
+            }
+          ],
+          "docstring": "Marks a compaction point. Everything before is summarized.",
+          "lines": [
+            116,
+            129
+          ],
+          "name": "CompactBoundary",
+          "type": "class"
+        },
+        {
+          "docstring": "Serialize a message to a single JSONL line.",
+          "lines": [
+            136,
+            138
+          ],
+          "name": "message_to_jsonl",
+          "signature": "(msg: Message) -> str",
+          "type": "function"
+        },
+        {
+          "docstring": "Deserialize a message from a JSONL line.",
+          "lines": [
+            141,
+            146
+          ],
+          "name": "message_from_jsonl",
+          "signature": "(line: str) -> Message",
+          "type": "function"
+        }
+      ]
+    },
+    "settings.py": {
+      "hash": "7e4322ab878c",
+      "indexed_at": "2026-04-10T02:46:02.792117+00:00",
+      "language": "python",
+      "lines": 114,
+      "mtime_ns": 1775782345643408700,
+      "size": 3463,
+      "symbols": [
+        {
+          "lines": [
+            13,
+            15
+          ],
+          "name": "PermissionRules",
+          "type": "class"
+        },
+        {
+          "lines": [
+            18,
+            21
+          ],
+          "name": "HookEntry",
+          "type": "class"
+        },
+        {
+          "lines": [
+            24,
+            63
+          ],
+          "name": "Settings",
+          "type": "class"
+        },
+        {
+          "docstring": "Deep merge two dicts. Override wins for scalars, lists are concatenated.",
+          "lines": [
+            66,
+            76
+          ],
+          "name": "_deep_merge",
+          "signature": "(base: dict, override: dict) -> dict",
+          "type": "function"
+        },
+        {
+          "docstring": "Load a JSON file, return empty dict if not found or invalid.",
+          "lines": [
+            79,
+            86
+          ],
+          "name": "_load_json_file",
+          "signature": "(path: Path) -> dict[str, Any]",
+          "type": "function"
+        },
+        {
+          "docstring": "Load settings with merge hierarchy: managed -> user -> project -> local.",
+          "lines": [
+            89,
+            114
+          ],
+          "name": "load_settings",
+          "signature": "(project_dir: str | None=None) -> Settings",
+          "type": "function"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-04-10T02:46:03.448304+00:00",
+  "version": "1.0"
+}

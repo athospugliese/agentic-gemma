@@ -1,0 +1,196 @@
+{
+  "directory": "app\\agents\\services\\memory",
+  "files": {
+    "__init__.py": {
+      "hash": "e3b0c44298fc",
+      "indexed_at": "2026-04-10T02:46:02.970240+00:00",
+      "language": "python",
+      "lines": 0,
+      "mtime_ns": 1775773839110420300,
+      "size": 0,
+      "symbols": []
+    },
+    "extractor.py": {
+      "hash": "faa82ad71a84",
+      "indexed_at": "2026-04-10T02:46:02.944708+00:00",
+      "language": "python",
+      "lines": 233,
+      "mtime_ns": 1775773839111420700,
+      "size": 7617,
+      "symbols": [
+        {
+          "docstring": "Extract memories from recent messages and write to disk.\n\nReturns list of written file paths.",
+          "lines": [
+            63,
+            117
+          ],
+          "name": "extract_memories",
+          "signature": "(messages: list[Message], memory_dir: Path, client: Any, model: str, last_cursor_uuid: str | None...",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Get messages since the last extraction cursor.",
+          "lines": [
+            120,
+            133
+          ],
+          "name": "_get_new_messages",
+          "signature": "(messages: list[Message], cursor_uuid: str | None) -> list[Message]",
+          "type": "function"
+        },
+        {
+          "docstring": "Check if any messages contain writes to the memory directory.",
+          "lines": [
+            136,
+            144
+          ],
+          "name": "_has_memory_writes",
+          "signature": "(messages: list[Message], memory_dir: Path) -> bool",
+          "type": "function"
+        },
+        {
+          "docstring": "Format messages for the extraction prompt.",
+          "lines": [
+            147,
+            160
+          ],
+          "name": "_format_messages_for_extraction",
+          "signature": "(messages: list[Message]) -> str",
+          "type": "function"
+        },
+        {
+          "docstring": "List existing memory filenames for dedup.",
+          "lines": [
+            163,
+            169
+          ],
+          "name": "_list_existing_memories",
+          "signature": "(memory_dir: Path) -> str",
+          "type": "function"
+        },
+        {
+          "docstring": "Parse memory blocks from response and write to disk.",
+          "lines": [
+            172,
+            198
+          ],
+          "name": "_parse_and_write_memories",
+          "signature": "(response: str, memory_dir: Path) -> list[str]",
+          "type": "function"
+        },
+        {
+          "docstring": "Append new memory entries to MEMORY.md index.",
+          "lines": [
+            201,
+            233
+          ],
+          "name": "_update_index",
+          "signature": "(memory_dir: Path, new_files: list[str]) -> None",
+          "type": "function"
+        }
+      ]
+    },
+    "loader.py": {
+      "hash": "c3d601bd7f38",
+      "indexed_at": "2026-04-10T02:46:02.957996+00:00",
+      "language": "python",
+      "lines": 208,
+      "mtime_ns": 1775773839111420700,
+      "size": 6659,
+      "symbols": [
+        {
+          "docstring": "Get the memory directory for a project.",
+          "lines": [
+            62,
+            66
+          ],
+          "name": "get_memory_dir",
+          "signature": "(project_dir: str, data_dir: str='~/.agent') -> Path",
+          "type": "function"
+        },
+        {
+          "docstring": "Build the memory system prompt section.\n\nReturns None if memory is disabled or directory doesn't exist.",
+          "lines": [
+            69,
+            106
+          ],
+          "name": "load_memory_prompt",
+          "signature": "(project_dir: str, data_dir: str='~/.agent') -> str | None",
+          "type": "function"
+        },
+        {
+          "docstring": "Truncate MEMORY.md to max lines/bytes with warning.",
+          "lines": [
+            109,
+            133
+          ],
+          "name": "_truncate_index",
+          "signature": "(content: str) -> str",
+          "type": "function"
+        },
+        {
+          "docstring": "Scan memory directory for individual memory files.\n\nReturns list of {filename, description, file_path, mtime_ms} sorted newest-first.",
+          "lines": [
+            136,
+            170
+          ],
+          "name": "scan_memory_files",
+          "signature": "(memory_dir: Path, max_files: int=200) -> list[dict[str, Any]]",
+          "type": "function"
+        },
+        {
+          "docstring": "Quick extraction of name and description from YAML frontmatter.",
+          "lines": [
+            173,
+            193
+          ],
+          "name": "_extract_frontmatter_fields",
+          "signature": "(text: str) -> tuple[str | None, str | None]",
+          "type": "function"
+        },
+        {
+          "docstring": "Read a memory file with truncation limits.",
+          "lines": [
+            196,
+            208
+          ],
+          "name": "read_memory_file",
+          "signature": "(path: str, max_lines: int=500, max_bytes: int=10000) -> str",
+          "type": "function"
+        }
+      ]
+    },
+    "ranker.py": {
+      "hash": "c65d8e01251d",
+      "indexed_at": "2026-04-10T02:46:02.969646+00:00",
+      "language": "python",
+      "lines": 118,
+      "mtime_ns": 1775773839112420100,
+      "size": 4119,
+      "symbols": [
+        {
+          "docstring": "Find memories relevant to the current user query.\n\nUses a fast model (gpt-4o-mini) as a ranker to select up to 5 memories\nfrom the memory directory ba",
+          "lines": [
+            28,
+            104
+          ],
+          "name": "find_relevant_memories",
+          "signature": "(query: str, memory_dir: Path, client: Any, model: str, recent_tools: list[str] | None=None, alre...",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Format selected memories as a system reminder to inject into the user message.",
+          "lines": [
+            107,
+            118
+          ],
+          "name": "format_memories_as_attachment",
+          "signature": "(memories: list[dict[str, Any]]) -> str | None",
+          "type": "function"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-04-10T02:46:03.453360+00:00",
+  "version": "1.0"
+}

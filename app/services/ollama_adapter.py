@@ -32,6 +32,86 @@ MAX_RETRIES = 3
 BASE_DELAY_S = 0.5
 
 
+def _extract_text_tool_calls(text: str) -> tuple[list[dict[str, Any]], str]:
+    """Fallback: parse tool calls emitted as JSON inside assistant text.
+
+    Small models sometimes emit tool_calls in the content stream instead of the
+    structured `message.tool_calls` field. This detects OpenAI-style tool call
+    JSON (array or single object) and returns (parsed_calls, cleaned_text).
+    """
+    if not text:
+        return [], text
+
+    stripped = text.strip()
+
+    # Find the first JSON candidate substring (array or object, possibly fenced).
+    candidates: list[str] = []
+    for open_ch, close_ch in (("[", "]"), ("{", "}")):
+        start = stripped.find(open_ch)
+        if start == -1:
+            continue
+        depth = 0
+        in_str = False
+        esc = False
+        for i in range(start, len(stripped)):
+            c = stripped[i]
+            if esc:
+                esc = False
+                continue
+            if c == "\\":
+                esc = True
+                continue
+            if c == '"':
+                in_str = not in_str
+                continue
+            if in_str:
+                continue
+            if c == open_ch:
+                depth += 1
+            elif c == close_ch:
+                depth -= 1
+                if depth == 0:
+                    candidates.append(stripped[start : i + 1])
+                    break
+
+    parsed = None
+    for cand in candidates:
+        try:
+            parsed = json.loads(cand)
+            break
+        except json.JSONDecodeError:
+            continue
+    if parsed is None:
+        return [], text
+
+    items = parsed if isinstance(parsed, list) else [parsed]
+    calls: list[dict[str, Any]] = []
+    for i, item in enumerate(items):
+        if not isinstance(item, dict):
+            return [], text
+        func = item.get("function") or item
+        name = func.get("name")
+        if not name:
+            return [], text
+        args = func.get("arguments", {})
+        if isinstance(args, str):
+            try:
+                args_dict = json.loads(args)
+            except json.JSONDecodeError:
+                args_dict = {"_raw": args}
+        elif isinstance(args, dict):
+            args_dict = args
+        else:
+            return [], text
+        calls.append({
+            "id": item.get("id") or f"call_{i}",
+            "name": name,
+            "arguments": json.dumps(args_dict),
+        })
+
+    return calls, ""
+
+
 def classify_ollama_error(error: Exception) -> LLMError:
     """Classify an Ollama error into a recovery category."""
     msg = str(error).lower()
@@ -214,6 +294,15 @@ class OllamaAdapter(LLMAdapter):
         data = done_event.data
         text = data.get("text") or None
         raw_tool_calls = data.get("tool_calls", [])
+
+        # Fallback: small models may emit tool_calls as JSON text instead of
+        # using the structured `tool_calls` field. Parse them out of `text`.
+        if not raw_tool_calls and text:
+            extracted, cleaned_text = _extract_text_tool_calls(text)
+            if extracted:
+                logger.info("Extracted %d tool call(s) from assistant text (fallback).", len(extracted))
+                raw_tool_calls = extracted
+                text = cleaned_text or None
 
         tool_calls = []
         for tc in raw_tool_calls:

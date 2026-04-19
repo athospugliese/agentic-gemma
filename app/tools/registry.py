@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any
 from app.tools.base import ToolRegistry
 from app.tools.bash import BashTool
 from app.tools.filesystem import EditTool, GlobTool, GrepTool, ReadTool, WriteTool
+from app.tools.mariadb import MariaDBSchemaTool, MariaDBTool
 from app.tools.plan_mode import EnterPlanModeTool, ExitPlanModeTool
 from app.tools.todo import TodoWriteTool
 from app.tools.web_fetch import WebFetchTool
@@ -18,7 +19,7 @@ if TYPE_CHECKING:
     from app.settings import Settings
 
 
-def create_default_registry() -> ToolRegistry:
+def create_default_registry(settings: "Settings | None" = None) -> ToolRegistry:
     """Create a registry with core tools (no Agent tool - needs extra deps)."""
     registry = ToolRegistry()
     registry.register(BashTool())
@@ -32,6 +33,9 @@ def create_default_registry() -> ToolRegistry:
     registry.register(TodoWriteTool())
     registry.register(EnterPlanModeTool())
     registry.register(ExitPlanModeTool())
+    if settings is not None:
+        registry.register(MariaDBTool(settings))
+        registry.register(MariaDBSchemaTool(settings))
     return registry
 
 
@@ -45,7 +49,7 @@ def create_full_registry(
     from app.tools.send_message import SendMessageTool
     from app.tools.task_tools import TaskOutputTool, TaskStopTool
 
-    registry = create_default_registry()
+    registry = create_default_registry(settings)
 
     agent_tool = AgentTool(
         adapter=adapter,

@@ -1,0 +1,281 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-text2sqlhabbo",
+    "name": "AgenticGemma — Text-to-SQL (Habbo)",
+    "description": "Fluxo completo para conversar com o agente text-to-sql sobre o banco MariaDB `habbo`.\n\nVariáveis:\n- `baseUrl` (default: http://localhost:8000)\n- `sessionId` — preencha após criar a sessão",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "sessionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "username",
+      "value": "IDjinn",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "/chat — resposta final limpa (stateless)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.session_id) {",
+              "  pm.collectionVariables.set('sessionId', json.session_id);",
+              "  console.log('sessionId salvo:', json.session_id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"prompt\": \"Use o agente text-to-sql para listar os 20 usuários que estiveram online mais recentemente no banco habbo, mostrando username, rank, last_online e motto.\",\n  \"project_dir\": \"c:/dev/bobba/agentic-gemma\",\n  \"coordinator_mode\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/chat",
+          "host": ["{{baseUrl}}"],
+          "path": ["chat"]
+        }
+      }
+    },
+    {
+      "name": "/chat — continuando conversa (com sessionId)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"prompt\": \"Agora mostre só os que têm rank maior que 5.\",\n  \"session_id\": \"{{sessionId}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/chat",
+          "host": ["{{baseUrl}}"],
+          "path": ["chat"]
+        }
+      }
+    },
+    {
+      "name": "/chat/stream — SSE texto puro",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "text/event-stream" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"prompt\": \"Agente text-to-sql: quantos usuários estão online agora no banco habbo?\",\n  \"project_dir\": \"c:/dev/bobba/agentic-gemma\",\n  \"coordinator_mode\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/chat/stream",
+          "host": ["{{baseUrl}}"],
+          "path": ["chat", "stream"]
+        }
+      }
+    },
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "1. Criar sessão (coordinator_mode)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.session_id) {",
+              "  pm.collectionVariables.set('sessionId', json.session_id);",
+              "  console.log('sessionId salvo:', json.session_id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"project_dir\": \"c:/dev/bobba/agentic-gemma\",\n  \"cwd\": \"c:/dev/bobba/agentic-gemma\",\n  \"permission_mode\": \"auto\",\n  \"coordinator_mode\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sessions",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions"]
+        }
+      }
+    },
+    {
+      "name": "2. Buscar usuário por username (sync)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"prompt\": \"Invoque o agente `text-to-sql` para consultar a tabela users do banco habbo e retornar todas as informações do usuário cujo username é '{{username}}'. Campos desejados: id, username, mail, rank, credits, vip_points, motto, look, gender, last_online, online, account_created, ip_register, ip_current. Antes de escrever o SELECT, chame MariaDBSchema com action='describe' table='users' para confirmar os nomes das colunas reais.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/sync",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "{{sessionId}}", "messages", "sync"]
+        }
+      }
+    },
+    {
+      "name": "3. Buscar usuário por ID (sync)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"prompt\": \"Agente text-to-sql: retorne todas as informações do usuário com id=1 na tabela users do banco habbo. Inclua dados de rank/permissões se houver tabela relacionada (ex: permission_groups).\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/sync",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "{{sessionId}}", "messages", "sync"]
+        }
+      }
+    },
+    {
+      "name": "4. Perfil completo do usuário (joins)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"prompt\": \"Agente text-to-sql: monte o perfil completo do usuário '{{username}}' — dados básicos da tabela users, saldos (credits, duckets, diamonds), permission group / rank, último IP e data do último login, e contagem de itens no inventário. Descubra as tabelas relevantes primeiro via MariaDBSchema.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/sync",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "{{sessionId}}", "messages", "sync"]
+        }
+      }
+    },
+    {
+      "name": "5. Últimos 20 usuários online (sync)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"prompt\": \"Agente text-to-sql: liste os 20 usuários que estiveram online mais recentemente no banco habbo, mostrando username, rank, last_online e motto.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages/sync",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "{{sessionId}}", "messages", "sync"]
+        }
+      }
+    },
+    {
+      "name": "6. Enviar mensagem (streaming SSE)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "text/event-stream" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"prompt\": \"Agente text-to-sql: quantos usuários estão atualmente online no banco habbo? Retorne o total e os 10 primeiros por ordem alfabética.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sessions/{{sessionId}}/messages",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "{{sessionId}}", "messages"]
+        }
+      }
+    },
+    {
+      "name": "Inspecionar contexto da sessão",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/sessions/{{sessionId}}/context",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "{{sessionId}}", "context"]
+        }
+      }
+    },
+    {
+      "name": "Abortar query em andamento",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/sessions/{{sessionId}}/abort",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "{{sessionId}}", "abort"]
+        }
+      }
+    },
+    {
+      "name": "Listar sessões ativas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/sessions",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions"]
+        }
+      }
+    },
+    {
+      "name": "Deletar sessão",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/sessions/{{sessionId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "{{sessionId}}"]
+        }
+      }
+    }
+  ]
+}

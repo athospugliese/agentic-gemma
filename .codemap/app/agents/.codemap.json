@@ -1,0 +1,131 @@
+{
+  "directory": "app\\agents",
+  "files": {
+    "__init__.py": {
+      "hash": "e3b0c44298fc",
+      "indexed_at": "2026-04-10T02:46:02.815129+00:00",
+      "language": "python",
+      "lines": 0,
+      "mtime_ns": 1775773839108415100,
+      "size": 0,
+      "symbols": []
+    },
+    "definitions.py": {
+      "hash": "3758e36bb49b",
+      "indexed_at": "2026-04-10T02:46:02.814405+00:00",
+      "language": "python",
+      "lines": 297,
+      "mtime_ns": 1775773839108415100,
+      "size": 12718,
+      "symbols": [
+        {
+          "children": [
+            {
+              "lines": [
+                34,
+                35
+              ],
+              "name": "has_wildcard_tools",
+              "signature": "(self) -> bool",
+              "type": "method"
+            }
+          ],
+          "docstring": "Definition of an agent type.",
+          "lines": [
+            12,
+            35
+          ],
+          "name": "AgentDefinition",
+          "type": "class"
+        },
+        {
+          "docstring": "Load custom agent definitions from .agent/agents/*.md files.",
+          "lines": [
+            223,
+            241
+          ],
+          "name": "load_custom_agents",
+          "signature": "(project_dir: str) -> list[AgentDefinition]",
+          "type": "function"
+        },
+        {
+          "docstring": "Parse a markdown file with YAML frontmatter into an AgentDefinition.",
+          "lines": [
+            244,
+            269
+          ],
+          "name": "_parse_agent_markdown",
+          "signature": "(path: Path, source: str) -> AgentDefinition | None",
+          "type": "function"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                279,
+                280
+              ],
+              "name": "__init__",
+              "signature": "(self) -> None",
+              "type": "method"
+            },
+            {
+              "lines": [
+                282,
+                283
+              ],
+              "name": "register",
+              "signature": "(self, agent: AgentDefinition) -> None",
+              "type": "method"
+            },
+            {
+              "lines": [
+                285,
+                286
+              ],
+              "name": "get",
+              "signature": "(self, agent_type: str) -> AgentDefinition | None",
+              "type": "method"
+            },
+            {
+              "lines": [
+                288,
+                289
+              ],
+              "name": "all",
+              "signature": "(self) -> list[AgentDefinition]",
+              "type": "method"
+            },
+            {
+              "lines": [
+                291,
+                293
+              ],
+              "name": "load_defaults",
+              "signature": "(self) -> None",
+              "type": "method"
+            },
+            {
+              "lines": [
+                295,
+                297
+              ],
+              "name": "load_custom",
+              "signature": "(self, project_dir: str) -> None",
+              "type": "method"
+            }
+          ],
+          "docstring": "Registry of available agent definitions.",
+          "lines": [
+            276,
+            297
+          ],
+          "name": "AgentRegistry",
+          "type": "class"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-04-10T02:46:03.450080+00:00",
+  "version": "1.0"
+}

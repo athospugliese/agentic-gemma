@@ -1,0 +1,899 @@
+{
+  "directory": "app\\agents\\services",
+  "files": {
+    "__init__.py": {
+      "hash": "e3b0c44298fc",
+      "indexed_at": "2026-04-10T02:46:02.941750+00:00",
+      "language": "python",
+      "lines": 0,
+      "mtime_ns": 1775773839109420900,
+      "size": 0,
+      "symbols": []
+    },
+    "compact.py": {
+      "hash": "ecb481ba03e4",
+      "indexed_at": "2026-04-10T02:46:02.834925+00:00",
+      "language": "python",
+      "lines": 328,
+      "mtime_ns": 1775773839109420900,
+      "size": 11523,
+      "symbols": [
+        {
+          "lines": [
+            67,
+            76
+          ],
+          "name": "CompactionResult",
+          "type": "class"
+        },
+        {
+          "lines": [
+            79,
+            84
+          ],
+          "name": "AutoCompactState",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                98,
+                107
+              ],
+              "name": "to_message",
+              "signature": "(self) -> Message",
+              "type": "method"
+            },
+            {
+              "lines": [
+                109,
+                120
+              ],
+              "name": "from_message",
+              "signature": "(cls, msg: Message) -> SessionMetadataEntry | None",
+              "type": "method"
+            }
+          ],
+          "docstring": "Metadata entry persisted in JSONL alongside messages.",
+          "lines": [
+            87,
+            120
+          ],
+          "name": "SessionMetadataEntry",
+          "type": "class"
+        },
+        {
+          "lines": [
+            127,
+            134
+          ],
+          "name": "estimate_tokens",
+          "signature": "(messages: list[Message]) -> int",
+          "type": "function"
+        },
+        {
+          "lines": [
+            137,
+            149
+          ],
+          "name": "should_auto_compact",
+          "signature": "(messages: list[Message], state: AutoCompactState, context_window: int=...) -> bool",
+          "type": "function"
+        },
+        {
+          "docstring": "Compact conversation with partial preservation of recent messages.\n\n1. Find split point (keep recent messages totaling >= MIN_PRESERVE_TOKENS)\n2. Summ",
+          "lines": [
+            156,
+            228
+          ],
+          "name": "compact_conversation",
+          "signature": "(messages: list[Message], client: Any, model: str, custom_instructions: str | None=None, trigger:...",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Replace old messages with boundary + preserved recent messages.\n\nReturns: [boundary] + [preserved recent messages]",
+          "lines": [
+            231,
+            248
+          ],
+          "name": "apply_compaction",
+          "signature": "(messages: list[Message], result: CompactionResult) -> list[Message]",
+          "type": "function"
+        },
+        {
+          "docstring": "Find where to split messages: old (to summarize) | recent (to keep).\n\nWalks backward, preserving at least MIN_PRESERVE_MESSAGES and MIN_PRESERVE_TOKEN",
+          "lines": [
+            251,
+            294
+          ],
+          "name": "_find_split_point",
+          "signature": "(messages: list[Message]) -> int",
+          "type": "function"
+        },
+        {
+          "lines": [
+            301,
+            321
+          ],
+          "name": "_format_conversation_for_compact",
+          "signature": "(messages: list[Message]) -> str",
+          "type": "function"
+        },
+        {
+          "lines": [
+            324,
+            328
+          ],
+          "name": "_format_summary",
+          "signature": "(raw: str) -> str",
+          "type": "function"
+        }
+      ]
+    },
+    "coordinator.py": {
+      "hash": "b8ed6982f4f6",
+      "indexed_at": "2026-04-10T02:46:02.853038+00:00",
+      "language": "python",
+      "lines": 180,
+      "mtime_ns": 1775773839109420900,
+      "size": 6434,
+      "symbols": [
+        {
+          "docstring": "Get the coordinator system prompt with worker capabilities and project context.",
+          "lines": [
+            134,
+            155
+          ],
+          "name": "get_coordinator_prompt",
+          "signature": "(tool_names: list[str] | None=None, cwd: str | None=None) -> str",
+          "type": "function"
+        },
+        {
+          "docstring": "Format a task completion notification as XML.",
+          "lines": [
+            158,
+            180
+          ],
+          "name": "format_task_notification",
+          "signature": "(agent_id: str, status: str, result: str, total_tokens: int=0, tool_uses: int=0, duration_ms: int...",
+          "type": "function"
+        }
+      ]
+    },
+    "llm_adapter.py": {
+      "hash": "707651f3c6de",
+      "indexed_at": "2026-04-10T02:46:02.870732+00:00",
+      "language": "python",
+      "lines": 445,
+      "mtime_ns": 1775773839110420300,
+      "size": 16224,
+      "symbols": [
+        {
+          "lines": [
+            31,
+            35
+          ],
+          "name": "LLMErrorCategory",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                47,
+                48
+              ],
+              "name": "__str__",
+              "signature": "(self) -> str",
+              "type": "method"
+            }
+          ],
+          "docstring": "Classified LLM error with metadata for recovery decisions.",
+          "lines": [
+            38,
+            48
+          ],
+          "name": "LLMError",
+          "type": "class"
+        },
+        {
+          "docstring": "Classify an OpenAI exception into a recovery category.",
+          "lines": [
+            51,
+            137
+          ],
+          "name": "classify_llm_error",
+          "signature": "(error: Exception) -> LLMError",
+          "type": "function"
+        },
+        {
+          "docstring": "A single event from the LLM stream.",
+          "lines": [
+            153,
+            158
+          ],
+          "name": "StreamEvent",
+          "type": "class"
+        },
+        {
+          "docstring": "Provider-agnostic tool definition.",
+          "lines": [
+            161,
+            167
+          ],
+          "name": "ToolDefinition",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "docstring": "Stream completion events from the LLM.",
+              "lines": [
+                177,
+                188
+              ],
+              "name": "create_completion",
+              "signature": "(self, messages: list[Message], system_prompt: str, tools: list[ToolDefinition], model: str, max_...",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Accumulate stream events into a complete assistant Message.",
+              "lines": [
+                190,
+                193
+              ],
+              "name": "build_assistant_message",
+              "signature": "(self, events: list[StreamEvent]) -> Message",
+              "type": "method"
+            }
+          ],
+          "docstring": "Abstract interface for LLM providers.",
+          "lines": [
+            174,
+            193
+          ],
+          "name": "LLMAdapter",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                203,
+                204
+              ],
+              "name": "__init__",
+              "signature": "(self, client: AsyncOpenAI)",
+              "type": "method"
+            },
+            {
+              "lines": [
+                208,
+                256
+              ],
+              "name": "create_completion",
+              "signature": "(self, messages: list[Message], system_prompt: str, tools: list[ToolDefinition], model: str, max_...",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Single streaming attempt (no retry).",
+              "lines": [
+                258,
+                345
+              ],
+              "name": "_stream_completion",
+              "signature": "(self, openai_messages: list[dict[str, Any]], openai_tools: Any, model: str, max_tokens: int, **k...",
+              "type": "async_method"
+            },
+            {
+              "lines": [
+                347,
+                377
+              ],
+              "name": "build_assistant_message",
+              "signature": "(self, events: list[StreamEvent]) -> Message",
+              "type": "method"
+            },
+            {
+              "docstring": "Convert internal messages to OpenAI format.",
+              "lines": [
+                381,
+                392
+              ],
+              "name": "_convert_messages",
+              "signature": "(self, messages: list[Message], system_prompt: str) -> list[dict[str, Any]]",
+              "type": "method"
+            },
+            {
+              "docstring": "Convert one internal message to one or more OpenAI messages.",
+              "lines": [
+                394,
+                431
+              ],
+              "name": "_convert_single_message",
+              "signature": "(self, msg: Message) -> list[dict[str, Any]]",
+              "type": "method"
+            },
+            {
+              "docstring": "Convert tool definitions to OpenAI format.",
+              "lines": [
+                433,
+                445
+              ],
+              "name": "_convert_tools",
+              "signature": "(self, tools: list[ToolDefinition]) -> list[dict[str, Any]]",
+              "type": "method"
+            }
+          ],
+          "docstring": "Translates internal format <-> OpenAI Chat Completions API.",
+          "lines": [
+            200,
+            445
+          ],
+          "name": "OpenAIAdapter",
+          "type": "class"
+        }
+      ]
+    },
+    "permissions.py": {
+      "hash": "0c10695e1686",
+      "indexed_at": "2026-04-10T02:46:02.875349+00:00",
+      "language": "python",
+      "lines": 194,
+      "mtime_ns": 1775773839112420100,
+      "size": 7777,
+      "symbols": [
+        {
+          "lines": [
+            10,
+            13
+          ],
+          "name": "PermissionDecision",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                26,
+                32
+              ],
+              "name": "__init__",
+              "signature": "(self, mode: str='auto', allow_rules: list[str] | None=None, deny_rules: list[str] | None=None)",
+              "type": "method"
+            },
+            {
+              "docstring": "Check if a tool call is allowed.",
+              "lines": [
+                34,
+                66
+              ],
+              "name": "check",
+              "signature": "(self, tool_name: str, tool_input: dict[str, Any], is_read_only: bool) -> PermissionDecision",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Create a pending permission request for interactive approval.",
+              "lines": [
+                68,
+                72
+              ],
+              "name": "create_permission_request",
+              "signature": "(self, tool_use_id: str) -> asyncio.Event",
+              "type": "method"
+            },
+            {
+              "docstring": "Resolve a pending permission request (called from HTTP endpoint).",
+              "lines": [
+                74,
+                79
+              ],
+              "name": "resolve_permission",
+              "signature": "(self, tool_use_id: str, allowed: bool) -> None",
+              "type": "method"
+            },
+            {
+              "docstring": "Create a permission request, emit event, and wait for resolution.",
+              "lines": [
+                81,
+                84
+              ],
+              "name": "request_and_wait",
+              "signature": "(self, tool_use_id: str, tool_name: str, tool_input: dict[str, Any], timeout: float=300) -> Permi...",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Wait for a permission to be resolved.",
+              "lines": [
+                86,
+                99
+              ],
+              "name": "wait_for_permission",
+              "signature": "(self, tool_use_id: str, timeout: float=300) -> PermissionDecision",
+              "type": "async_method"
+            }
+          ],
+          "docstring": "Manages tool execution permissions.\n\nModes:\n    - bypass: allow everything\n    - auto: allow read-only tools + known-safe commands, ask for the rest\n ",
+          "lines": [
+            16,
+            99
+          ],
+          "name": "PermissionManager",
+          "type": "class"
+        },
+        {
+          "docstring": "Classify whether a mutating tool call is safe for auto-approval.\n\nReturns True for safe mutations, False for potentially dangerous ones.",
+          "lines": [
+            132,
+            151
+          ],
+          "name": "_is_safe_mutation",
+          "signature": "(tool_name: str, tool_input: dict[str, Any]) -> bool",
+          "type": "function"
+        },
+        {
+          "docstring": "Check if a bash command is safe for auto-approval.\n\nThis is a safety classifier, not a read-only classifier.\nReturns False for commands that could be ",
+          "lines": [
+            154,
+            194
+          ],
+          "name": "_is_safe_bash_command",
+          "signature": "(command: str) -> bool",
+          "type": "function"
+        }
+      ]
+    },
+    "prompt.py": {
+      "hash": "e780e463dc16",
+      "indexed_at": "2026-04-10T02:46:02.891756+00:00",
+      "language": "python",
+      "lines": 199,
+      "mtime_ns": 1775773839112420100,
+      "size": 6525,
+      "symbols": [
+        {
+          "docstring": "Build the complete system prompt from sections.\n\nOpenAI: this becomes the first message with role=\"system\".",
+          "lines": [
+            17,
+            74
+          ],
+          "name": "build_system_prompt",
+          "signature": "(tools: list[Tool], cwd: str, custom_prompt: str | None=None, claude_md_content: str | None=None,...",
+          "type": "function"
+        },
+        {
+          "lines": [
+            77,
+            89
+          ],
+          "name": "_default_role_section",
+          "signature": "() -> str",
+          "type": "function"
+        },
+        {
+          "lines": [
+            92,
+            98
+          ],
+          "name": "_tool_usage_section",
+          "signature": "(tools: list[Tool]) -> str",
+          "type": "function"
+        },
+        {
+          "lines": [
+            101,
+            106
+          ],
+          "name": "_style_section",
+          "signature": "() -> str",
+          "type": "function"
+        },
+        {
+          "lines": [
+            109,
+            115
+          ],
+          "name": "_environment_section",
+          "signature": "(cwd: str) -> str",
+          "type": "function"
+        },
+        {
+          "docstring": "Load project instructions from CLAUDE.md files (priority order).",
+          "lines": [
+            118,
+            147
+          ],
+          "name": "load_claude_md",
+          "signature": "(project_dir: str) -> str | None",
+          "type": "function"
+        },
+        {
+          "docstring": "Build the agent list section that tells the model which agents are available.",
+          "lines": [
+            150,
+            184
+          ],
+          "name": "_agent_list_section",
+          "signature": "(agent_definitions: list, tools: list[Tool]) -> str",
+          "type": "function"
+        },
+        {
+          "docstring": "Describe which tools an agent has access to.",
+          "lines": [
+            187,
+            199
+          ],
+          "name": "_get_agent_tools_description",
+          "signature": "(agent: Any, available_tool_names: set[str]) -> str",
+          "type": "function"
+        }
+      ]
+    },
+    "query.py": {
+      "hash": "bc9920adf028",
+      "indexed_at": "2026-04-10T02:46:02.912661+00:00",
+      "language": "python",
+      "lines": 641,
+      "mtime_ns": 1775773839113534400,
+      "size": 29390,
+      "symbols": [
+        {
+          "children": [
+            {
+              "lines": [
+                44,
+                48
+              ],
+              "name": "clone",
+              "signature": "(self) -> 'ContentReplacementState'",
+              "type": "method"
+            }
+          ],
+          "docstring": "Tracks tool result budget decisions. Once frozen, never changes (cache stability).",
+          "lines": [
+            38,
+            48
+          ],
+          "name": "ContentReplacementState",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                57,
+                58
+              ],
+              "name": "child",
+              "signature": "(self, child_id: str) -> 'QueryTracking'",
+              "type": "method"
+            }
+          ],
+          "docstring": "Tracks agent chain depth for telemetry and recursion detection.",
+          "lines": [
+            51,
+            58
+          ],
+          "name": "QueryTracking",
+          "type": "class"
+        },
+        {
+          "docstring": "Event yielded from the query loop to the HTTP layer.",
+          "lines": [
+            67,
+            72
+          ],
+          "name": "QueryEvent",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                85,
+                135
+              ],
+              "name": "__init__",
+              "signature": "(self, adapter: LLMAdapter, registry: ToolRegistry, permissions: PermissionManager, session_id: s...",
+              "type": "method"
+            },
+            {
+              "docstring": "Log a context mutation for observability.",
+              "lines": [
+                137,
+                150
+              ],
+              "name": "_log_context_event",
+              "signature": "(self, event: str, source: str, detail: str='', size: int=0) -> None",
+              "type": "method"
+            },
+            {
+              "docstring": "Signal the query loop to abort.",
+              "lines": [
+                152,
+                154
+              ],
+              "name": "abort",
+              "signature": "(self) -> None",
+              "type": "method"
+            },
+            {
+              "docstring": "Submit a user message and stream query events.\n\nThis is the main entry point. It:\n1. Adds the user message\n2. Builds system prompt (cached, with git +",
+              "lines": [
+                156,
+                244
+              ],
+              "name": "submit_message",
+              "signature": "(self, prompt: str) -> AsyncGenerator[QueryEvent, None]",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Prefetch relevant memories for the current query.",
+              "lines": [
+                246,
+                273
+              ],
+              "name": "_prefetch_memories",
+              "signature": "(self, query: str) -> str | None",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Background task: extract memories from recent conversation.",
+              "lines": [
+                275,
+                299
+              ],
+              "name": "_extract_memories_background",
+              "signature": "(self) -> None",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Core loop: call LLM -> execute tools -> repeat.\n\nEach iteration:\n1. Auto-compact if context too large\n2. Normalize messages (pair tool_use/result, mer",
+              "lines": [
+                301,
+                508
+              ],
+              "name": "_query_loop",
+              "signature": "(self, system_prompt: str, tool_defs: list[ToolDefinition]) -> AsyncGenerator[QueryEvent, None]",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Execute tool calls, respecting concurrency rules.\n\nRead-only tools run concurrently, mutating tools run serially.",
+              "lines": [
+                510,
+                554
+              ],
+              "name": "_execute_tools",
+              "signature": "(self, tool_calls: list[ToolUseBlock]) -> list[tuple[ToolUseBlock, ToolResult, Message]]",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Run a single tool call with permission checking, budget tracking, and result truncation.",
+              "lines": [
+                556,
+                634
+              ],
+              "name": "_run_single_tool",
+              "signature": "(self, tc: ToolUseBlock) -> tuple[ToolResult, Message]",
+              "type": "async_method"
+            },
+            {
+              "lines": [
+                636,
+                641
+              ],
+              "name": "_accumulate_usage",
+              "signature": "(self, usage: TokenUsage) -> None",
+              "type": "method"
+            }
+          ],
+          "docstring": "Manages one conversation session with the LLM.\n\nHandles: message accumulation, system prompt, tool dispatch, error recovery.",
+          "lines": [
+            79,
+            641
+          ],
+          "name": "QueryEngine",
+          "type": "class"
+        }
+      ]
+    },
+    "session_resume.py": {
+      "hash": "d7a0d716f771",
+      "indexed_at": "2026-04-10T02:46:02.926490+00:00",
+      "language": "python",
+      "lines": 161,
+      "mtime_ns": 1775773839113534400,
+      "size": 5118,
+      "symbols": [
+        {
+          "docstring": "Discover persisted sessions from disk.\n\nReads head/tail of JSONL files to extract metadata without full parsing.\nReturns sorted by last modified (newe",
+          "lines": [
+            15,
+            54
+          ],
+          "name": "discover_sessions",
+          "signature": "(sessions_dir: Path, limit: int=50) -> list[dict[str, Any]]",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Extract metadata from session file without full parsing.\n\nReads first and last 64KB to find title, last prompt, and message count.",
+          "lines": [
+            57,
+            123
+          ],
+          "name": "_extract_metadata",
+          "signature": "(path: Path, tail_bytes: int=65536) -> dict[str, Any]",
+          "type": "function"
+        },
+        {
+          "docstring": "Load a full session from JSONL file.\n\nReturns (messages, metadata).\nHandles interruption detection and message cleanup.",
+          "lines": [
+            126,
+            161
+          ],
+          "name": "load_session",
+          "signature": "(sessions_dir: Path, session_id: str) -> tuple[list[Message], dict[str, Any]]",
+          "type": "async_function"
+        }
+      ]
+    },
+    "session_store.py": {
+      "hash": "ec6b77024190",
+      "indexed_at": "2026-04-10T02:46:02.941159+00:00",
+      "language": "python",
+      "lines": 256,
+      "mtime_ns": 1775773839114534100,
+      "size": 10045,
+      "symbols": [
+        {
+          "children": [
+            {
+              "lines": [
+                21,
+                25
+              ],
+              "name": "__init__",
+              "signature": "(self, base_dir: str='~/.agent/sessions')",
+              "type": "method"
+            },
+            {
+              "lines": [
+                27,
+                29
+              ],
+              "name": "register",
+              "signature": "(self, session_id: str, engine: QueryEngine) -> None",
+              "type": "method"
+            },
+            {
+              "lines": [
+                31,
+                35
+              ],
+              "name": "get",
+              "signature": "(self, session_id: str) -> QueryEngine | None",
+              "type": "method"
+            },
+            {
+              "lines": [
+                37,
+                39
+              ],
+              "name": "remove",
+              "signature": "(self, session_id: str) -> None",
+              "type": "method"
+            },
+            {
+              "lines": [
+                41,
+                51
+              ],
+              "name": "list_active",
+              "signature": "(self) -> list[dict[str, Any]]",
+              "type": "method"
+            },
+            {
+              "lines": [
+                55,
+                56
+              ],
+              "name": "_transcript_path",
+              "signature": "(self, session_id: str) -> Path",
+              "type": "method"
+            },
+            {
+              "docstring": "Append a single message to the session transcript.",
+              "lines": [
+                58,
+                63
+              ],
+              "name": "save_message",
+              "signature": "(self, session_id: str, message: Message) -> None",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Append multiple messages to the session transcript.",
+              "lines": [
+                65,
+                70
+              ],
+              "name": "save_messages",
+              "signature": "(self, session_id: str, messages: list[Message]) -> None",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Persist session configuration metadata to JSONL for recovery on resume.",
+              "lines": [
+                72,
+                90
+              ],
+              "name": "save_session_metadata",
+              "signature": "(self, session_id: str, engine: Any) -> None",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Load messages and metadata from a session transcript.\n\nReturns (messages, metadata).\nFor large files (>1MB), uses backward scan to only load post-boun",
+              "lines": [
+                92,
+                115
+              ],
+              "name": "load_transcript",
+              "signature": "(self, session_id: str) -> tuple[list[Message], dict[str, Any]]",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Load entire JSONL file, extracting metadata entries.",
+              "lines": [
+                117,
+                153
+              ],
+              "name": "_load_transcript_full",
+              "signature": "(self, path: Path) -> tuple[list[Message], dict[str, Any]]",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Backward scan for large files: find last boundary, load only post-boundary.\n\nReads last 64KB first to find metadata, then scans backward for boundary.",
+              "lines": [
+                155,
+                231
+              ],
+              "name": "_load_transcript_optimized",
+              "signature": "(self, path: Path) -> tuple[list[Message], dict[str, Any]]",
+              "type": "async_method"
+            },
+            {
+              "docstring": "List all persisted sessions from disk.",
+              "lines": [
+                233,
+                245
+              ],
+              "name": "list_persisted",
+              "signature": "(self) -> list[dict[str, Any]]",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Remove sessions idle longer than max_idle_seconds.",
+              "lines": [
+                247,
+                256
+              ],
+              "name": "cleanup_expired",
+              "signature": "(self, max_idle_seconds: int=3600) -> int",
+              "type": "async_method"
+            }
+          ],
+          "docstring": "Manages active sessions and JSONL transcript persistence.",
+          "lines": [
+            18,
+            256
+          ],
+          "name": "SessionStore",
+          "type": "class"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-04-10T02:46:03.451089+00:00",
+  "version": "1.0"
+}

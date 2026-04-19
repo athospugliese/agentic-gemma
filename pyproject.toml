@@ -13,4 +13,6 @@ dependencies = [
     "ollama",
     "aiofiles",
     "python-frontmatter",
+    "aiomysql",
+    "sqlparse",
 ]

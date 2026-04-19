@@ -1,0 +1,328 @@
+{
+  "directory": "app\\utils",
+  "files": {
+    "__init__.py": {
+      "hash": "e3b0c44298fc",
+      "indexed_at": "2026-04-10T02:46:03.446396+00:00",
+      "language": "python",
+      "lines": 0,
+      "mtime_ns": 1775773839127534600,
+      "size": 0,
+      "symbols": []
+    },
+    "file_state.py": {
+      "hash": "49ff9f6f4ad3",
+      "indexed_at": "2026-04-10T02:46:03.264662+00:00",
+      "language": "python",
+      "lines": 66,
+      "mtime_ns": 1775773839128534300,
+      "size": 2061,
+      "symbols": [
+        {
+          "docstring": "State of a file when last read.",
+          "lines": [
+            10,
+            18
+          ],
+          "name": "FileState",
+          "type": "class"
+        },
+        {
+          "children": [
+            {
+              "lines": [
+                29,
+                33
+              ],
+              "name": "__init__",
+              "signature": "(self, max_entries: int=100, max_bytes: int=25 * 1024 * 1024)",
+              "type": "method"
+            },
+            {
+              "lines": [
+                35,
+                40
+              ],
+              "name": "get",
+              "signature": "(self, path: str) -> FileState | None",
+              "type": "method"
+            },
+            {
+              "lines": [
+                42,
+                59
+              ],
+              "name": "set",
+              "signature": "(self, path: str, state: FileState) -> None",
+              "type": "method"
+            },
+            {
+              "lines": [
+                61,
+                62
+              ],
+              "name": "has_been_read",
+              "signature": "(self, path: str) -> bool",
+              "type": "method"
+            },
+            {
+              "lines": [
+                64,
+                66
+              ],
+              "name": "clear",
+              "signature": "(self) -> None",
+              "type": "method"
+            }
+          ],
+          "docstring": "LRU cache of recently read file states.\n\nUsed by Edit tool to:\n1. Enforce read-before-edit\n2. Detect stale writes (file changed since last read)",
+          "lines": [
+            21,
+            66
+          ],
+          "name": "FileStateCache",
+          "type": "class"
+        }
+      ]
+    },
+    "git.py": {
+      "hash": "c97de4cc5fdc",
+      "indexed_at": "2026-04-10T02:46:03.284853+00:00",
+      "language": "python",
+      "lines": 64,
+      "mtime_ns": 1775773839128534300,
+      "size": 2258,
+      "symbols": [
+        {
+          "docstring": "Run a git command and return stdout (empty string on failure).",
+          "lines": [
+            9,
+            21
+          ],
+          "name": "_run_git",
+          "signature": "(args: list[str], cwd: str) -> str",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Capture git branch, status, and recent commits for system prompt injection.\n\nReturns None if not in a git repo.",
+          "lines": [
+            24,
+            64
+          ],
+          "name": "get_git_context",
+          "signature": "(cwd: str) -> str | None",
+          "type": "async_function"
+        }
+      ]
+    },
+    "hooks.py": {
+      "hash": "62e37c33d53d",
+      "indexed_at": "2026-04-10T02:46:03.312831+00:00",
+      "language": "python",
+      "lines": 131,
+      "mtime_ns": 1775773839128534300,
+      "size": 4339,
+      "symbols": [
+        {
+          "docstring": "Result from a hook execution.",
+          "lines": [
+            26,
+            32
+          ],
+          "name": "HookResult",
+          "type": "class"
+        },
+        {
+          "docstring": "Execute all hooks matching an event.\n\nArgs:\n    event: Hook event name (e.g., \"PreToolUse\", \"PostToolUse\")\n    hooks_config: The hooks dict from Setti",
+          "lines": [
+            35,
+            85
+          ],
+          "name": "execute_hooks",
+          "signature": "(event: str, hooks_config: dict[str, list[Any]], context: dict[str, Any] | None=None, cwd: str='....",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Run a single hook command as a subprocess.",
+          "lines": [
+            88,
+            131
+          ],
+          "name": "_run_hook_command",
+          "signature": "(command: str, context: dict[str, Any] | None, timeout: int, cwd: str) -> HookResult",
+          "type": "async_function"
+        }
+      ]
+    },
+    "messages.py": {
+      "hash": "77a4fed6610d",
+      "indexed_at": "2026-04-10T02:46:03.339113+00:00",
+      "language": "python",
+      "lines": 153,
+      "mtime_ns": 1775773839129533000,
+      "size": 5262,
+      "symbols": [
+        {
+          "docstring": "Normalize internal messages for API submission.\n\nHandles:\n1. Strip system messages (they go in system prompt)\n2. Ensure tool_use/tool_result pairing\n3",
+          "lines": [
+            15,
+            43
+          ],
+          "name": "normalize_messages_for_api",
+          "signature": "(messages: list[Message]) -> list[Message]",
+          "type": "function"
+        },
+        {
+          "docstring": "Ensure every tool_use has a matching tool_result and vice versa.\n\n- Orphaned tool_results (no matching tool_use) are removed\n- Unmatched tool_uses get",
+          "lines": [
+            46,
+            92
+          ],
+          "name": "_ensure_tool_pairing",
+          "signature": "(messages: list[Message]) -> list[Message]",
+          "type": "function"
+        },
+        {
+          "docstring": "Merge consecutive user messages into a single message.\n\nOpenAI requires alternating user/assistant roles (except tool messages).\nConsecutive user mess",
+          "lines": [
+            95,
+            123
+          ],
+          "name": "_merge_consecutive_users",
+          "signature": "(messages: list[Message]) -> list[Message]",
+          "type": "function"
+        },
+        {
+          "docstring": "Detect if a conversation was interrupted mid-response.\n\nReturns (cleaned_messages, was_interrupted).\nIf interrupted, appends a synthetic continuation ",
+          "lines": [
+            126,
+            153
+          ],
+          "name": "detect_interrupted_conversation",
+          "signature": "(messages: list[Message]) -> tuple[list[Message], bool]",
+          "type": "function"
+        }
+      ]
+    },
+    "notification_queue.py": {
+      "hash": "915ba00285df",
+      "indexed_at": "2026-04-10T02:46:03.358798+00:00",
+      "language": "python",
+      "lines": 42,
+      "mtime_ns": 1775773839129533000,
+      "size": 1266,
+      "symbols": [
+        {
+          "children": [
+            {
+              "lines": [
+                19,
+                20
+              ],
+              "name": "__init__",
+              "signature": "(self) -> None",
+              "type": "method"
+            },
+            {
+              "docstring": "Add a notification to the queue.",
+              "lines": [
+                22,
+                25
+              ],
+              "name": "enqueue",
+              "signature": "(self, notification: str) -> None",
+              "type": "async_method"
+            },
+            {
+              "docstring": "Non-blocking drain of all pending notifications.\n\nReturns all queued notifications without waiting.",
+              "lines": [
+                27,
+                38
+              ],
+              "name": "drain",
+              "signature": "(self) -> list[str]",
+              "type": "method"
+            },
+            {
+              "lines": [
+                40,
+                42
+              ],
+              "name": "pending_count",
+              "signature": "(self) -> int",
+              "type": "method"
+            }
+          ],
+          "docstring": "Async queue for task notifications between agents and the main loop.",
+          "lines": [
+            16,
+            42
+          ],
+          "name": "NotificationQueue",
+          "type": "class"
+        }
+      ]
+    },
+    "side_query.py": {
+      "hash": "4be94d152caa",
+      "indexed_at": "2026-04-10T02:46:03.375129+00:00",
+      "language": "python",
+      "lines": 74,
+      "mtime_ns": 1775773839129533000,
+      "size": 1993,
+      "symbols": [
+        {
+          "docstring": "Make an auxiliary LLM call (non-streaming, no tools).\n\nUsed for: memory ranking, compaction summaries, permission explanations.\nAccepts either an Asyn",
+          "lines": [
+            12,
+            52
+          ],
+          "name": "side_query",
+          "signature": "(client: Any, model: str, system: str, user: str, max_tokens: int=256, response_format: dict[str,...",
+          "type": "async_function"
+        },
+        {
+          "docstring": "Side query that returns parsed JSON.",
+          "lines": [
+            55,
+            74
+          ],
+          "name": "side_query_json",
+          "signature": "(client: Any, model: str, system: str, user: str, max_tokens: int=256) -> dict[str, Any]",
+          "type": "async_function"
+        }
+      ]
+    },
+    "tool_result_storage.py": {
+      "hash": "a7c79fbbd171",
+      "indexed_at": "2026-04-10T02:46:03.411874+00:00",
+      "language": "python",
+      "lines": 57,
+      "mtime_ns": 1775773839130534800,
+      "size": 1586,
+      "symbols": [
+        {
+          "docstring": "Truncate large tool results, persisting full output to disk.\n\nReturns the output as-is if under threshold, or a truncated version\nwith a reference to ",
+          "lines": [
+            12,
+            42
+          ],
+          "name": "maybe_truncate_result",
+          "signature": "(output: str, tool_name: str, tool_use_id: str, session_dir: str, max_chars: int=...) -> str",
+          "type": "function"
+        },
+        {
+          "lines": [
+            56,
+            57
+          ],
+          "name": "get_threshold_for_tool",
+          "signature": "(tool_name: str) -> int",
+          "type": "function"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-04-10T02:46:03.460108+00:00",
+  "version": "1.0"
+}

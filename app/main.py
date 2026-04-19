@@ -131,6 +131,22 @@ class PermissionResponse(BaseModel):
     allow: bool
 
 
+class ChatRequest(BaseModel):
+    """Simple chat input - only the final agent answer is returned."""
+
+    prompt: str
+    session_id: str | None = None  # optional: reuse existing session for memory
+    system_prompt: str | None = None
+    model: str | None = None
+    coordinator_mode: bool = True  # default: force delegation via Agent tool
+    project_dir: str | None = None
+
+
+class ChatResponse(BaseModel):
+    text: str
+    session_id: str
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -363,6 +379,83 @@ async def send_message_sync(session_id: str, req: MessageRequest) -> MessageResp
         tool_calls=tool_calls,
         messages=turn_messages,
     )
+
+
+def _resolve_chat_engine(req: ChatRequest) -> tuple[str, Any]:
+    """Resolve or create the QueryEngine for a /chat request."""
+    if req.session_id:
+        engine = session_store.get(req.session_id)
+        if engine:
+            if req.model:
+                engine.model = req.model
+            return req.session_id, engine
+
+    session_id = uuid4().hex[:16]
+    create_req = CreateSessionRequest(
+        project_dir=req.project_dir,
+        cwd=req.project_dir,
+        model=req.model,
+        system_prompt=req.system_prompt,
+        coordinator_mode=req.coordinator_mode,
+    )
+    engine = _create_engine(session_id, create_req)
+    session_store.register(session_id, engine)
+    return session_id, engine
+
+
+@app.post("/chat", response_model=ChatResponse)
+async def chat(req: ChatRequest) -> ChatResponse:
+    """Send a prompt and return ONLY the final agent text. No tool calls, no tokens.
+
+    Creates an ephemeral session if `session_id` is not provided. Pass the returned
+    `session_id` back on subsequent calls to keep conversation memory.
+    """
+    session_id, engine = _resolve_chat_engine(req)
+
+    text_parts: list[str] = []
+    try:
+        async for event in engine.submit_message(req.prompt):
+            if event.type == "text_delta":
+                text_parts.append(event.data.get("content", ""))
+            elif event.type == "error":
+                raise HTTPException(500, event.data.get("message", "Agent error"))
+        await session_store.save_messages(session_id, engine.messages)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Chat error")
+        raise HTTPException(500, str(e))
+
+    return ChatResponse(text="".join(text_parts).strip(), session_id=session_id)
+
+
+@app.post("/chat/stream")
+async def chat_stream(req: ChatRequest) -> StreamingResponse:
+    """Stream only the final agent text as SSE.
+
+    Event format: `data: <text chunk>\\n\\n`. Terminates with `data: [DONE]\\n\\n`.
+    First event carries the session_id as `event: session\\ndata: <id>\\n\\n`.
+    """
+    session_id, engine = _resolve_chat_engine(req)
+
+    async def event_stream():
+        yield f"event: session\ndata: {session_id}\n\n"
+        try:
+            async for event in engine.submit_message(req.prompt):
+                if event.type == "text_delta":
+                    chunk = event.data.get("content", "")
+                    if chunk:
+                        yield f"data: {json.dumps(chunk)}\n\n"
+                elif event.type == "error":
+                    msg = event.data.get("message", "Agent error")
+                    yield f"event: error\ndata: {json.dumps(msg)}\n\n"
+            await session_store.save_messages(session_id, engine.messages)
+        except Exception as e:
+            logger.exception("Chat stream error")
+            yield f"event: error\ndata: {json.dumps(str(e))}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
 @app.post("/sessions/{session_id}/abort")
